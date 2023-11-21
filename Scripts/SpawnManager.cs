@@ -12,11 +12,13 @@ public class SpawnManager : MonoBehaviour
         PlayerManager.OnPlayerSpawn += ChooseSpawnPosition;
     }
 
-    private void ChooseSpawnPosition(Transform player)
+    private void ChooseSpawnPosition(Transform playerTransform)
     {
-        print("Setting player spawn point");
-        var trans = SpawnPoints[UnityEngine.Random.Range(0, SpawnPoints.Count)];
-        player.position = trans.position;
-        player.rotation = trans.rotation;
+        int id = (int)playerTransform.GetComponent<NetworkObject>().NetworkObjectId;
+        int n = Mathf.Min(SpawnPoints.Count, id);
+
+        var t = SpawnPoints[n-1];
+        playerTransform.position = t.position;
+        playerTransform.rotation = t.rotation;
     }
 }

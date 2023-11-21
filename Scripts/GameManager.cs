@@ -8,18 +8,23 @@ public class GameManager : MonoBehaviour
     
     private Ball ballObject;
 
+    public static Action OnBallAssigned;
+
     private void Awake()
     {
-        PlayerManager.OnSpawnBall += SpawnBall;
+        PlayerManager.OnSpawnBall += InstantiateBall;
+        Ball.OnBallSpawned += AssignBall;
+        UiManager.OnResetBallButtonPressed += ResetBall;
     }
 
     private void OnDestroy()
     {
-        PlayerManager.OnSpawnBall -= SpawnBall;
+        PlayerManager.OnSpawnBall -= InstantiateBall;
     }
 
-    public void SpawnBall(Action<Ball> callback)
+    public void InstantiateBall(Action<Ball> callback)
     {
+        // This null and reset probably isn't needed
         if (ballObject == null)
         {
             ballObject = Instantiate(ball);
@@ -28,6 +33,12 @@ public class GameManager : MonoBehaviour
         }
 
         ResetBall();
+    }
+
+    private void AssignBall(Ball ball)
+    {
+        ballObject = ball;
+        OnBallAssigned?.Invoke();
     }
 
     private void ResetBall()

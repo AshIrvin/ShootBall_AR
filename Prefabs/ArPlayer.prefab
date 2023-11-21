@@ -456,10 +456,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8fff92ad15c41eab99e00613e0f8cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xRorigin: {fileID: 1286254413827151426}
+  xrOrigin: {fileID: 1286254413827151426}
   arPlaneManager: {fileID: 5720040997821549247}
   playerObject: {fileID: 3077571820546831543}
   cam: {fileID: 6087144911340207133}
+  playerColour: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &1361225936199511062
 MonoBehaviour:
   m_ObjectHideFlags: 0

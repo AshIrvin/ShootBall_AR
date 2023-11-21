@@ -21,7 +21,7 @@ public class GoalManager : NetworkBehaviour
         if (other.CompareTag("Ball"))
         {
             UpdateScore();
-            //SendServerRpc();
+            SendServerRpc();
         }
     }
 
@@ -36,7 +36,6 @@ public class GoalManager : NetworkBehaviour
     {
         if (IsOwner) return;
 
-        print("Update score from server");
         UpdateScore();
     }
 }

@@ -6,40 +6,36 @@ using UnityEngine.XR.ARFoundation;
 
 public class PlayerManager : NetworkBehaviour
 {
-    [SerializeField] private XROrigin xRorigin;
-    [SerializeField] private ARPlaneManager arPlaneManager;
-
     [SerializeField] private GameObject playerObject;
-    [SerializeField] private Camera cam;
+
+    private XROrigin xrOrigin;
+    private ARPlaneManager arPlaneManager;
+    private Camera cam;
 
     public Color playerColour;
-
     public static Action<Action<Ball>> OnSpawnBall;
     public static Action<Transform> OnPlayerSpawn;
 
     private void Awake()
     {
-        xRorigin = GetComponent<XROrigin>();
+        xrOrigin = GetComponent<XROrigin>();
         arPlaneManager = GetComponent<ARPlaneManager>();
-
-        //if (!IsOwner) return;
-
-        // TODO - fix 2 balls spawning on client side.
+        cam = xrOrigin.Camera;
 
         UiManager.OnSpawnBallButtonPressed += SetupBallSpawn;
     }
 
     private void Start()
     {
-        print("On player start");
+        if (!IsOwner) return;
+
         OnPlayerSpawn?.Invoke(gameObject.transform);
     }
 
     private void OnEnable()
     {
-        //if (!IsOwner) return;
+        // TODO - Set correct colour for each player
         SetRandomColour();
-
     }
 
     public override void OnNetworkSpawn()
@@ -47,13 +43,14 @@ public class PlayerManager : NetworkBehaviour
         if (IsOwner) return;
 
         if (arPlaneManager != null) Destroy(arPlaneManager);
-        if (xRorigin != null) Destroy(xRorigin);
+        if (xrOrigin != null) Destroy(xrOrigin);
         cam.enabled = false;
     }
 
     private void SetRandomColour()
     {
-        playerColour = playerObject.GetComponent<MeshRenderer>().material.color = UnityEngine.Random.ColorHSV();
+        playerColour = UnityEngine.Random.ColorHSV(0, 1, 1, 1);
+        playerObject.GetComponent<MeshRenderer>().material.color = playerColour;
     }
 
     private void SetupBallSpawn()
@@ -73,7 +70,8 @@ public class PlayerManager : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        ball.GetComponent<NetworkObject>().Spawn();
+        var obj = ball.GetComponent<NetworkObject>();
+        obj.Spawn();
     }
 
     [ServerRpc]
@@ -87,7 +85,6 @@ public class PlayerManager : NetworkBehaviour
     {
         if (IsOwner) return;
 
-        print("Spawn Ball from server");
         SpawnBall();
     }
 }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UiManager : MonoBehaviour
 {
     public static Action OnFireButtonPressed;
     public static Action OnSpawnBallButtonPressed;
+    public static Action OnResetBallButtonPressed;
 
     public static Action OnHostButtonPressed;
     public static Action OnServerButtonPressed;
@@ -15,10 +17,13 @@ public class UiManager : MonoBehaviour
 
     [SerializeField] private GameObject gameCanvas;
     [SerializeField] private Camera menuCamera;
+    [SerializeField] private Button spawnButton;
 
     private void Start()
     {
         EnableGameCanvas(false);
+
+        GameManager.OnBallAssigned += ChangeSpawnButton;
     }
 
     public void FireProjectileButton()
@@ -75,5 +80,16 @@ public class UiManager : MonoBehaviour
     private void DisableMenuCamera()
     {
         menuCamera.enabled = false;
+    }
+
+    private void ChangeSpawnButton()
+    {
+        spawnButton.GetComponentInChildren<TextMeshProUGUI>().text = "Reset";
+        spawnButton.onClick.AddListener(ResetBallButton);
+    }
+
+    private void ResetBallButton()
+    {
+        OnResetBallButtonPressed?.Invoke();
     }
 }
